@@ -7,7 +7,7 @@ import { Element } from "react-scroll";
 import { getRepos, Repositories } from "../api/octokit-api";
 import LoadingIcon from "./icons/LoadingIcon";
 import { Orientation } from "./AppContainer";
-const RepositoryWall = React.lazy(() => import("./RepositoryWall"));
+const RepositoryList = React.lazy(() => import("./RepositoryList"));
 
 type Props = {
 	onVisibilityChange: (pageNumber: number, inview: boolean) => void;
@@ -46,51 +46,32 @@ function RepositorySection({ onVisibilityChange, orientation }: Props) {
 	}, [inView, onVisibilityChange]);
 
 	return (
-		<Element css={projectSectionStyle} name="repository-section">
-			<div css={projectSectionTitleStyle} ref={ref}>
-				<h2>Projects</h2>
-				{/* <h2>|</h2>
-				<h2>Repos</h2> */}
+		<Element css={repositorySectionContainerStyle} name="repository-section">
+			<div ref={ref} />
+			<h2>Repos</h2>
+			<div css={repositorySectionStyle}>
+				<Suspense fallback={<LoadingIcon />}>
+					{repositoryData && <RepositoryList data={repositoryData} />}
+				</Suspense>
 			</div>
-			<Suspense fallback={<LoadingIcon />}>
-				{repositoryData && (
-					<RepositoryWall data={repositoryData} orientation={orientation} />
-				)}
-			</Suspense>
 		</Element>
 	);
 }
-const projectSectionStyle = css`
-	min-height: 100vh;
-	width: 100%;
+
+const repositorySectionContainerStyle = css`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-items: center;
+	padding: 0 120px;
+	gap: 80px;
 `;
 
-const projectSectionTitleStyle = css`
+const repositorySectionStyle = css`
 	display: flex;
+	flex-direction: column;
 	align-items: center;
-	justify-content: center;
-	margin: 80px 0 120px 0;
+	min-height: 100vh;
 	width: 100%;
-	/* h2 {
-		justify-content: center;
-		margin: 0 8px;
-		&:first-of-type {
-			cursor: pointer;
-			flex: 1;
-			display: flex;
-			justify-content: flex-end;
-		}
-		&:last-of-type {
-			cursor: pointer;
-			flex: 1;
-			display: flex;
-			justify-content: flex-start;
-		}
-	} */
 `;
 
 export default RepositorySection;
